@@ -1,0 +1,9 @@
+{
+  "name": "DEMO",
+  "kind": "postgres",
+  "connectionString": "Host=fk-eb-arp-demo-poi-db.otr.ru;Port=5432;Username=ufos_wl_arp;Password=Oracle33;Database=ebpoi;Pooling=true;Maximum Pool Size=50",
+  "schema": "ufos_wl_arp",
+  "descBaseUrl": "http://fk-eb-arp-demo-ufos:18080",
+  "descUrlTemplate": "/ARP/static/resources/forms/services/{service}/{doctype}/{version}/{doctype}.desc",
+  "descVersion": "1.0"
+}

@@ -1,0 +1,45 @@
+﻿╨Я╨Р╨Ъ╨Х╨в SDK ╨Ф╨Ы╨п .NET:
+ Version:           8.0.413
+ Commit:            a31823e79b
+ Workload version:  8.0.400-manifests.6322a93a
+ MSBuild version:   17.11.38+901dc04e4
+
+╨б╤А╨╡╨┤╨░ ╨▓╤Л╨┐╨╛╨╗╨╜╨╡╨╜╨╕╤П:
+ OS Name:     Windows
+ OS Version:  10.0.26100
+ OS Platform: Windows
+ RID:         win-x64
+ Base Path:   C:\Program Files\dotnet\sdk\8.0.413\
+
+╨г╤Б╤В╨░╨╜╨╛╨▓╨╗╨╡╨╜╨╜╤Л╨╡ ╤А╨░╨▒╨╛╤З╨╕╨╡ ╨╜╨░╨│╤А╤Г╨╖╨║╨╕ .NET:
+╨Э╨░╤Б╤В╤А╨╛╨╡╨╜╨╛ ╨╜╨░ ╨╕╤Б╨┐╨╛╨╗╤М╨╖╨╛╨▓╨░╨╜╨╕╨╡ loose manifests ╨┐╤А╨╕ ╤Г╤Б╤В╨░╨╜╨╛╨▓╨║╨╡ ╨╜╨╛╨▓╤Л╤Е ╨╝╨░╨╜╨╕╤Д╨╡╤Б╤В╨╛╨▓.
+╨Э╨╡╤В ╤Г╤Б╤В╨░╨╜╨╛╨▓╨╗╨╡╨╜╨╜╤Л╤Е ╤А╨░╨▒╨╛╤З╨╕╤Е ╨╜╨░╨│╤А╤Г╨╖╨╛╨║ ╨┤╨╗╤П ╨╛╤В╨╛╨▒╤А╨░╨╢╨╡╨╜╨╕╤П.
+
+Host:
+  Version:      8.0.19
+  Architecture: x64
+  Commit:       fce8ed90dc
+
+.NET SDKs installed:
+  8.0.413 [C:\Program Files\dotnet\sdk]
+
+.NET runtimes installed:
+  Microsoft.AspNetCore.App 8.0.19 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+  Microsoft.NETCore.App 8.0.19 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+  Microsoft.WindowsDesktop.App 8.0.19 [C:\Program Files\dotnet\shared\Microsoft.WindowsDesktop.App]
+
+Other architectures found:
+  x86   [C:\Program Files (x86)\dotnet]
+    registered at [HKLM\SOFTWARE\dotnet\Setup\InstalledVersions\x86\InstallLocation]
+
+Environment variables:
+  Not set
+
+global.json file:
+  Not found
+
+Learn more:
+  https://aka.ms/dotnet/info
+
+Download .NET:
+  https://aka.ms/dotnet/download
