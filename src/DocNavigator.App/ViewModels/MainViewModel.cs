@@ -22,6 +22,28 @@ namespace DocNavigator.App.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        // === Export progress state ===
+        private bool _isExporting;
+        private int _exportPercent;
+        private string _exportStatus = string.Empty;
+        private System.Threading.CancellationTokenSource? _exportCts;
+
+        public bool IsExporting
+        {
+            get => _isExporting;
+            private set { _isExporting = value; OnPropertyChanged(); }
+        }
+        public int ExportPercent
+        {
+            get => _exportPercent;
+            private set { _exportPercent = value; OnPropertyChanged(); }
+        }
+        public string ExportStatus
+        {
+            get => _exportStatus;
+            private set { _exportStatus = value; OnPropertyChanged(); }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string? n = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));
@@ -304,37 +326,64 @@ namespace DocNavigator.App.ViewModels
             var path = await sfd.ShowAsync(owner);
             if (string.IsNullOrWhiteSpace(path)) return;
 
+            _exportCts?.Dispose();
+            _exportCts = new System.Threading.CancellationTokenSource();
+
+            IsExporting = true;
+            ExportPercent = 0;
+            ExportStatus = "Подготовка…";
+
+            var progress = new Progress<ExportProgress>(p =>
+            {
+                // Грубая оценка процента по фазам
+                int basePct = (int)Math.Round(((p.SheetIndex - 1d) / Math.Max(p.SheetCount,1)) * 100.0);
+                int phaseAdd = p.Phase == "Подготовка" ? 5 : p.Phase == "Запись" ? 15 : 30;
+                ExportPercent = Math.Min(99, Math.Max(basePct, basePct + phaseAdd));
+                ExportStatus = $"{p.Phase}: {p.SheetName} ({p.SheetIndex}/{p.SheetCount})";
+            });
+
             try
             {
-                ExcelExporter.SaveSingleTable(ActiveTab!.Table, ActiveTab!.Header, path);
+                var table = ActiveTab!.Table;
+                var header = ActiveTab!.Header;
+                await Task.Run(() => ExcelExporter.SaveSingleTable(table, header, path, autoFitSampleRows: 200, progress: progress, ct: _exportCts.Token,meta: _currentDescMeta));
+                ExportPercent = 100;
+                ExportStatus = "Готово";
+            }
+            catch (OperationCanceledException)
+            {
+                ExportStatus = "Отменено";
             }
             catch (IOException ioex)
             {
                 await ShowErrorAsync(ioex.Message);
+                ExportStatus = "Ошибка: " + ioex.Message;
             }
             catch (Exception ex)
             {
                 await ShowErrorAsync("Ошибка при сохранении Excel: " + ex.Message);
+                ExportStatus = "Ошибка: " + ex.Message;
             }
-        }
+            finally
+            {
+                IsExporting = false;
+            }
+    }
 
         private async Task ExportAllToExcelAsync()
         {
-            if (_lastRepo == null || _lastDoc == null || Tables.Count == 0)
+            if (_lastRepo == null || _lastDoc == null)
                 return;
 
-            var items = new List<(string Sheet, DataTable Table)>();
+            // Собираем набор таблиц
+            var items = new List<(string Sheet, System.Data.DataTable Table)>();
             foreach (var node in Tables)
             {
                 if (!node.HasRows) continue;
-
-                var dt = await _lastRepo.ReadTableAsync(node.Name, _lastDoc.DocId, CancellationToken.None);
+                var dt = await _lastRepo.ReadTableAsync(node.Name, _lastDoc.DocId, System.Threading.CancellationToken.None);
                 if (dt.Rows.Count == 0) continue;
-
-                var sheet = node.Title;
-                items.Add((sheet, dt));
+                items.Add((node.Title, dt));
             }
-
             if (items.Count == 0) return;
 
             var sfd = new SaveFileDialog
@@ -348,19 +397,46 @@ namespace DocNavigator.App.ViewModels
             var path = await sfd.ShowAsync(owner);
             if (string.IsNullOrWhiteSpace(path)) return;
 
+            _exportCts?.Dispose();
+            _exportCts = new System.Threading.CancellationTokenSource();
+
+            IsExporting = true;
+            ExportPercent = 0;
+            ExportStatus = "Подготовка…";
+
+            var progress = new Progress<ExportProgress>(p =>
+            {
+                int basePct = (int)Math.Round(((p.SheetIndex - 1d) / Math.Max(p.SheetCount,1)) * 100.0);
+                int phaseAdd = p.Phase == "Подготовка" ? 5 : p.Phase == "Запись" ? 15 : 30;
+                ExportPercent = Math.Min(99, Math.Max(basePct, basePct + phaseAdd));
+                ExportStatus = $"{p.Phase}: {p.SheetName} ({p.SheetIndex}/{p.SheetCount})";
+            });
+
             try
             {
-                ExcelExporter.SaveMultipleTables(items.ToArray(), path);
+                await Task.Run(() => ExcelExporter.SaveMultipleTables(items.ToArray(), path, autoFitSampleRows: 200, progress: progress, ct: _exportCts.Token, meta: _currentDescMeta));
+                ExportPercent = 100;
+                ExportStatus = "Готово";
+            }
+            catch (OperationCanceledException)
+            {
+                ExportStatus = "Отменено";
             }
             catch (IOException ioex)
             {
                 await ShowErrorAsync(ioex.Message);
+                ExportStatus = "Ошибка: " + ioex.Message;
             }
             catch (Exception ex)
             {
                 await ShowErrorAsync("Ошибка при сохранении Excel: " + ex.Message);
+                ExportStatus = "Ошибка: " + ex.Message;
             }
-        }
+            finally
+            {
+                IsExporting = false;
+            }
+    }
 
         private async Task ExportActiveToCsvRawAsync()
         {

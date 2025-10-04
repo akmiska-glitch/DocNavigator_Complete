@@ -24,6 +24,7 @@ namespace DocNavigator.App.Models
         /// Именно этот словарь используется для переименования колонок грида.
         /// </summary>
         public Dictionary<string, string> ColumnCaptionsById { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+        public object Fieldsets { get; internal set; }
     }
 
     

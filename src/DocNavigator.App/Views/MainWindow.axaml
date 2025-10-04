@@ -46,7 +46,13 @@
       <Button Content="Вкладка (RAW CSV)"
               Command="{Binding ExportActiveTabToCsvRawCommand}"
               IsEnabled="{Binding HasActiveTab}"/>
-    </StackPanel>
+    
+      <Separator Width="12"/>
+      <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center" IsVisible="{Binding IsExporting}">
+        <ProgressBar Width="220" Height="16" Minimum="0" Maximum="100" Value="{Binding ExportPercent}"/>
+        <TextBlock Text="{Binding ExportStatus}" VerticalAlignment="Center"/>
+      </StackPanel>
+</StackPanel>
 
     <ListBox Grid.Row="1"
              ItemsSource="{Binding Tables}"

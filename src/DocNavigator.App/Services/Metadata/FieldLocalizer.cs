@@ -44,6 +44,7 @@ namespace DocNavigator.App.Services.Metadata
                     used.Add(col.ColumnName);
                 }
             }
+
         }
 
         private static string MakeUnique(string baseName, HashSet<string> used)
@@ -65,5 +66,7 @@ namespace DocNavigator.App.Services.Metadata
                 i++;
             }
         }
+        
     }
+    
 }

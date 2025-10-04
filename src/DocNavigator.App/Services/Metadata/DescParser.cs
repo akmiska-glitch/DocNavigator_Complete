@@ -74,11 +74,15 @@ namespace DocNavigator.App.Services.Metadata
                  .Where(e => e.Name.LocalName.Equals("field", StringComparison.OrdinalIgnoreCase) ||
                              e.Name.LocalName.Equals("column", StringComparison.OrdinalIgnoreCase)))
     {
-        var sys  = f.Attribute("name")?.Value;
-        var ru   = f.Attribute("desc")?.Value
-                   ?? f.Attribute("documentation")?.Value
-                   ?? f.Attribute("caption")?.Value;
-        var type = f.Attribute("type")?.Value;
+        var sys  = f.Attribute("name")?.Value
+           ?? f.Attribute("systemName")?.Value;
+
+var ru   = f.Attribute("desc")?.Value
+           ?? f.Attribute("documentation")?.Value
+           ?? f.Attribute("caption")?.Value;
+
+var type = f.Attribute("type")?.Value;
+
 
         if (!string.IsNullOrWhiteSpace(sys))
         {
